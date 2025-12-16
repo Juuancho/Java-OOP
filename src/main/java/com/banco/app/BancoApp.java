@@ -67,7 +67,7 @@ public class BancoApp {
 
         }
         menu.cerrarScanner();
-        IO.print("Gracias por usar el sistema. Hasta luego.");
+        IO.print("Gracias por usar el sistema. ¡Hasta Pronto!");
     }
 
 }
