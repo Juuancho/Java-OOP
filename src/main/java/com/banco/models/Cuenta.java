@@ -22,13 +22,25 @@ public abstract class Cuenta implements iOperacionesCuenta {
     @Override
     public void depositar(double monto) {
         if (monto > 0) {
-            IO.println("Deposito de $" + monto + " Existoso.");
+            this.saldo += monto;
+            IO.println("Deposito de $" + monto + " Exitoso.");
         } else {
             IO.println("Monto de deposito no valido");
         }
     }
 
     // Metodo retirar
+    @Override
+    public boolean retirar(double monto) {
+        if (monto > 0 && monto <= this.saldo) {
+            this.saldo -= monto;
+            IO.println("Retiro de $" + monto + " exitoso. Nuevo saldo: $" + this.saldo);
+            return true;
+        } else {
+            IO.println("Retiro fallido. Saldo insuficiente.");
+            return false;
+        }
+    }
 
     // Getters
     public double getSaldo() {
