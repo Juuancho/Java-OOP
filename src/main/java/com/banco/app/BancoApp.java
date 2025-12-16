@@ -1,49 +1,73 @@
 package com.banco.app;
 
-import com.banco.interfaces.iOperacionesCuenta;
-import com.banco.models.CuentaAhorros;
-
-// Importar colecciones
-import java.util.ArrayList;
-import java.util.List;
+import com.banco.ui.MenuBanco;
+import com.banco.exceptions.MontoInvalidoException;
+import com.banco.exceptions.SaldoInsuficienteException;
+import com.banco.services.BancoService;
 
 public class BancoApp {
 
     void main() {
-        // Creacion de objetos
+        // Crear instancia de la clase
+        MenuBanco menu = new MenuBanco();
 
-        iOperacionesCuenta ctaMauricio = new CuentaAhorros("Mauricio L.", "1001A", 1500.00, 0.05);
-        iOperacionesCuenta ctaJuan = new CuentaAhorros("Juan Garces", "2002B", 800.00, 0.07);
+        // Pedir datos para crear la cuenta
+        IO.println("=== Bienvenido al Sistema Bancario ===\n");
+        IO.print("Ingrese el nombre del titular: ");
+        String titular = menu.leerTitular();
+        IO.print("Ingrese el número de cuenta: ");
+        String numeroCuenta = menu.leerNumeroCuenta();
+        IO.print("Ingrese el saldo inicial: ");
+        double saldoInicial = menu.leerSaldoInicial();
+        IO.print("Ingrese la tasa de interés (ej: 0.05 para 5%): ");
+        double tasaInteres = menu.leerTasaInteres();
 
-        // Creamos una listo que solo acepta objetos que cumplen con el contrato iOperacionesCUenta
-        List<iOperacionesCuenta> cuentasActivas = new ArrayList<>();
-        cuentasActivas.add(ctaMauricio);
-        cuentasActivas.add(ctaJuan);
+        // Crear el servicio con los datos
+        BancoService servicio = new BancoService(titular, numeroCuenta, saldoInicial, tasaInteres);
 
-        IO.println("--- Pruebas de Operaciones ---");
-        //Llamar al metodo
+        // Loop del menu
+        boolean continuar = true;
+        while (continuar) {
+            menu.mostrarMenu();
+            int opcion = menu.leerOpcion();
 
-        for (iOperacionesCuenta cuenta: cuentasActivas) {
-            IO.println(" ");
-            //Llamar a depositar
-            cuenta.depositar(200.00);
+            switch (opcion) {
+                case 1:
+                    IO.print("Ingrese el monto a depositar: ");
+                    double monto = menu.leerMonto();
+                    try {
+                        servicio.realizarDeposito(monto);
+                    } catch (MontoInvalidoException e) {
+                        IO.println(e.getMessage());
+                    }
+                    break;
+                case 2:
+                    IO.print("Ingrese el monto a retirar: ");
+                    monto = menu.leerMonto();
+                    try {
+                        servicio.realizarRetiro(monto);
+                    } catch (SaldoInsuficienteException e) {
+                        IO.println(e.getMessage());
+                    } catch (MontoInvalidoException e) {
+                        IO.println(e.getMessage());
+                    }
+                    break;
+                case 3:
+                    servicio.mostrarInformacion();
+                    break;
+                case 4:
+                    servicio.aplicarInteres();
+                    break;
+                case 5:
+                    continuar = false;
+                    break;
+                default:
+                    IO.print("Opción inválida. Por favor, seleccione una opción válida.");
+            }
 
-            //Llamar a retirar
-            cuenta.retirar(100.00);
-
-            //Llamar a mostrarInformacion
-            cuenta.mostrarInformacion();
         }
-
-        IO.println("\n--- Aplicando Interes ---");
-
-        if (ctaMauricio instanceof CuentaAhorros) {
-            ((CuentaAhorros) ctaMauricio).aplicarInteres();
-        }
-
-        IO.println("\n--- Fin de Pruebas ---");
-        ctaMauricio.mostrarInformacion();
-
+        menu.cerrarScanner();
+        IO.print("Gracias por usar el sistema. Hasta luego.");
     }
 
 }

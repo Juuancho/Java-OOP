@@ -1,5 +1,7 @@
 package com.banco.models;
 
+import com.banco.exceptions.SaldoInsuficienteException;
+
 // Herencia, extends de la clase base Cuenta
 public class CuentaAhorros extends Cuenta {
 
@@ -11,34 +13,33 @@ public class CuentaAhorros extends Cuenta {
         this.tasaInteres = tasaInteres;
     }
 
-    // 1. Sobrescritura de retirar, implementación específica para Ahorros.
+    // Sobrescritura de retirar, implementación específica para Ahorros.
     @Override
-    public boolean retirar(double monto) {
+    public boolean retirar(double monto) throws SaldoInsuficienteException {
         // Regla: No puedes retirar si el saldo es insuficiente.
         if (monto > 0 && monto <= this.saldo) {
             this.saldo -= monto;
-            IO.println("Retiro de $" + monto + " exitoso de Ahorros. Nuevo saldo: $" + this.saldo);
+            IO.println("\n Retiro de $" + monto + " exitoso de Ahorros. Nuevo saldo: $" + this.saldo + "\n");
             return true;
         } else {
-            IO.println("Retiro fallido en Ahorros. Saldo insuficiente.");
-            return false;
+            throw new SaldoInsuficienteException("\n Retiro fallido en Ahorros. Saldo insuficiente. \n");
         }
     }
 
-    // 2. Sobrescritura de mostrarInformacion, implementación específica para
+    // Sobrescritura de mostrarInformacion, implementación específica para
     // Ahorros.
     @Override
     public void mostrarInformacion() {
-        IO.println("--- Cuenta de Ahorros ---");
+        IO.println("\n --- Cuenta de Ahorros --- \n");
         IO.println("Titular: " + titular);
         IO.println("Número: " + numeroCuenta);
         IO.println("Saldo: $" + saldo);
         IO.println("Tasa de Interés: " + tasaInteres * 100 + "%");
     }
 
-    // MÉTODOS ÚNICOS: Lógica que solo existe en CuentaAhorros
+    // Metodos unicos, logica que solo existe en CuentaAhorros
     public void aplicarInteres() {
         this.saldo += this.saldo * tasaInteres;
-        IO.println("Interés aplicado. Saldo con interés: $" + this.saldo);
+        IO.println("\n Interés aplicado. Saldo con interés: $" + this.saldo + "\n");
     }
 }

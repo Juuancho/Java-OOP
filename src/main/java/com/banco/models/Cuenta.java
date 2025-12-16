@@ -1,6 +1,8 @@
 package com.banco.models;
 
 import com.banco.interfaces.iOperacionesCuenta;
+import com.banco.exceptions.MontoInvalidoException;
+import com.banco.exceptions.SaldoInsuficienteException;
 
 public abstract class Cuenta implements iOperacionesCuenta {
 
@@ -20,25 +22,24 @@ public abstract class Cuenta implements iOperacionesCuenta {
 
     // Metodo depositar.
     @Override
-    public void depositar(double monto) {
+    public void depositar(double monto) throws MontoInvalidoException {
         if (monto > 0) {
             this.saldo += monto;
-            IO.println("Deposito de $" + monto + " Exitoso.");
+            IO.println("\n Deposito de $" + monto + " Exitoso.\n");
         } else {
-            IO.println("Monto de deposito no valido");
+            throw new MontoInvalidoException("\n Monto de deposito no valido \n");
         }
     }
 
     // Metodo retirar
     @Override
-    public boolean retirar(double monto) {
+    public boolean retirar(double monto) throws SaldoInsuficienteException {
         if (monto > 0 && monto <= this.saldo) {
             this.saldo -= monto;
-            IO.println("Retiro de $" + monto + " exitoso. Nuevo saldo: $" + this.saldo);
+            IO.println("\n Retiro de $" + monto + " exitoso. Nuevo saldo: $" + this.saldo + "\n");
             return true;
         } else {
-            IO.println("Retiro fallido. Saldo insuficiente.");
-            return false;
+            throw new SaldoInsuficienteException("\n Retiro fallido. Saldo insuficiente. \n");
         }
     }
 
